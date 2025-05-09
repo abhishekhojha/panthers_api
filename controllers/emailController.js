@@ -35,6 +35,13 @@ const uploadEmail = async (req, res) => {
   }
 
   const filePath = req.file.path;
+  const fileExtension = path.extname(req.file.originalname).toLowerCase();
+
+  // ✅ Validate .eml extension
+  if (fileExtension !== ".eml") {
+    fs.unlinkSync(filePath); // Clean up the file if invalid
+    return res.status(400).json({ error: "Only .eml files are allowed" });
+  }
 
   try {
     const { emailText, fromEmail } = await extractEmailContent(filePath);

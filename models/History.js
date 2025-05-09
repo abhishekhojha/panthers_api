@@ -6,8 +6,8 @@ const historySchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
     },
+    deviceID: { type: String, unique: true, default: null },
     type: { type: String, enum: ["url", "email"], required: true },
     encryptedUrl: { type: String, required: true }, // Store encrypted URL only
     isPhishing: { type: Boolean, required: true },
