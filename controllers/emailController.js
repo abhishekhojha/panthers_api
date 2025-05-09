@@ -2,6 +2,34 @@ const fs = require("fs");
 const axios = require("axios");
 const { simpleParser } = require("mailparser");
 
+// Helper: Resolve MX records for domain
+function resolveMxAsync(domain) {
+  return new Promise((resolve, reject) => {
+    dns.resolveMx(domain, (err, addresses) => {
+      if (err) reject(err);
+      else resolve(addresses);
+    });
+  });
+}
+
+// Combined email validation
+async function isValidEmail(email) {
+  if (!validator.isEmail(email)) {
+    return { valid: false, reason: "Invalid email format" };
+  }
+
+  const domain = email.split("@")[1];
+  try {
+    const mxRecords = await resolveMxAsync(domain);
+    if (!mxRecords || mxRecords.length === 0) {
+      return { valid: false, reason: "Email domain has no MX records" };
+    }
+    return { valid: true };
+  } catch (err) {
+    return { valid: false, reason: "Error resolving domain" };
+  }
+}
+
 const extractEmailContent = (filePath) => {
   return new Promise((resolve, reject) => {
     simpleParser(fs.createReadStream(filePath), (err, parsed) => {

@@ -1,5 +1,5 @@
 const User = require("../models/User");
-
+const History = require("../models/History");
 exports.getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
