@@ -8,7 +8,7 @@ const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 const cookieParser = require("cookie-parser");
 const multer = require('multer');
-// const emailRoutes = require('./routes/emailRoutes'); 
+const predictRoutes = require('./routes/predictRoutes'); 
 const upload = multer({ dest: 'uploads/' });
 dotenv.config();
 // MongoDB Connection
@@ -51,5 +51,6 @@ app.use(passport.initialize());
 // Routes
 app.use("/auth", authRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/predict", predictRoutes);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

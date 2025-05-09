@@ -29,35 +29,35 @@ const predictUrl = async (req, res) => {
     res.status(500).json({ error: "Prediction service unavailable" });
   }
 };
-const predictEmail = async (req, res) => {
-  const { sender, subject, body } = req.body;
+// const predictEmail = async (req, res) => {
+//   const { sender, subject, body } = req.body;
 
-  if (!sender || !subject || !body) {
-    return res.status(400).json({ error: "Sender, subject, and body are required" });
-  }
+//   if (!sender || !subject || !body) {
+//     return res.status(400).json({ error: "Sender, subject, and body are required" });
+//   }
 
-  try {
-    // Call the Python service for phishing detection
-    const response = await axios.post("http://localhost:5000/predict-email", { sender, subject, body });
+//   try {
+//     // Call the Python service for phishing detection
+//     const response = await axios.post("http://localhost:5000/predict-email", { sender, subject, body });
 
-    // Encrypt email body before saving (optional)
-    const encryptedBody = new History().encryptUrl(body);
+//     // Encrypt email body before saving (optional)
+//     const encryptedBody = new History().encryptUrl(body);
 
-    // Save the result to history
-    await History.create({
-      userId: req.user._id,
-      type: 'email',
-      encryptedUrl: encryptedBody, // Encrypted email content (or metadata)
-      isPhishing: response.data.isPhishing,
-    });
+//     // Save the result to history
+//     await History.create({
+//       userId: req.user._id,
+//       type: 'email',
+//       encryptedUrl: encryptedBody, // Encrypted email content (or metadata)
+//       isPhishing: response.data.isPhishing,
+//     });
 
-    // Return prediction response
-    res.json(response.data);
-  } catch (error) {
-    console.error("Prediction API Error:", error.message);
-    res.status(500).json({ error: "Prediction service unavailable" });
-  }
-};
+//     // Return prediction response
+//     res.json(response.data);
+//   } catch (error) {
+//     console.error("Prediction API Error:", error.message);
+//     res.status(500).json({ error: "Prediction service unavailable" });
+//   }
+// };
 
 
 module.exports = { predictUrl };
