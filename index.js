@@ -6,6 +6,7 @@ const session = require("express-session");
 const dotenv = require("dotenv");
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
+const communityReport = require("./routes/communityReport");
 const cookieParser = require("cookie-parser");
 
 const predictRoutes = require('./routes/predictRoutes'); 
@@ -51,6 +52,7 @@ app.use(passport.initialize());
 app.use("/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/predict", predictRoutes);
+app.use("/api/community", communityReport);
 app.get('/', (req, res) => {
   res.send('Welcome to the Home Page!');
 });
