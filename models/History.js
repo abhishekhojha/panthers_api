@@ -5,8 +5,7 @@ const historySchema = new mongoose.Schema({
   type: { type: String, enum: ["url", "email"], required: true },
   input: { type: String, required: true },
   isPhishing: { type: Boolean, required: true },
-  createdAt: { type: Date, default: Date.now },
-});
+},{timestamps: true});
 
 const History = mongoose.model("History", historySchema);
 module.exports = History;

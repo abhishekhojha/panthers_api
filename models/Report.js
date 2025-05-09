@@ -10,8 +10,7 @@ const communityReportSchema = new mongoose.Schema({
     enum: ["pending", "validated", "rejected"],
     default: "pending",
   },
-  createdAt: { type: Date, default: Date.now },
-});
+},{timestamps: true});
 
 const CommunityReport = mongoose.model(
   "CommunityReport",
