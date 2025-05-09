@@ -14,7 +14,6 @@ const predictUrl = async (req, res) => {
       "https://newspaper-thesis-vip-bridge.trycloudflare.com/predict",
       { url }
     );
-
     // Encrypt the URL before saving
     const encryptedUrl = new History().encryptUrl(url);
     console.log(response.data);
