@@ -12,12 +12,13 @@ exports.getHistory = async (req, res) => {
   try {
     const userId = req.user.id; 
     const { page = 1, limit = 10, type } = req.query;
-
+    
     const user = await User.findById(userId);
-    if (!user || !user.deviceID) {
+    console.log(user);
+    if (!user || user.deviceID != null) {
       return res.status(404).json({ success: false, message: "User or device ID not found" });
     }
-
+    
     const query = {
       userId,
       deviceID: user.deviceID,
