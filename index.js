@@ -7,7 +7,9 @@ const dotenv = require("dotenv");
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 const cookieParser = require("cookie-parser");
-
+const multer = require('multer');
+// const emailRoutes = require('./routes/emailRoutes'); 
+const upload = multer({ dest: 'uploads/' });
 dotenv.config();
 // MongoDB Connection
 connectDB();
