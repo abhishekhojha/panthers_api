@@ -1,3 +1,4 @@
+const axios = require("axios");
 const History = require("../models/History");
 
 const predictUrl = async (req, res) => {
@@ -9,14 +10,18 @@ const predictUrl = async (req, res) => {
 
   try {
     // Make the request to Python service
-    const response = await axios.post("http://localhost:6000/predict", { url });
+    const response = await axios.post(
+      "https://newspaper-thesis-vip-bridge.trycloudflare.com/predict",
+      { url }
+    );
 
     // Encrypt the URL before saving
     const encryptedUrl = new History().encryptUrl(url);
-
+    console.log(response.data);
+    
     // Save history with encrypted URL
     await History.create({
-      userId: req.user._id,
+      userId: req.user.id,
       type: "url",
       encryptedUrl: encryptedUrl, // Save only encrypted URL
       isPhishing: response.data.isPhishing,
@@ -58,6 +63,5 @@ const predictUrl = async (req, res) => {
 //     res.status(500).json({ error: "Prediction service unavailable" });
 //   }
 // };
-
 
 module.exports = { predictUrl };
