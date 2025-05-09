@@ -1,6 +1,6 @@
 const fs = require("fs");
 const axios = require("axios");
-const { simpleParser } = require("mailparser"); 
+const { simpleParser } = require("mailparser");
 
 const extractEmailContent = (filePath) => {
   return new Promise((resolve, reject) => {
@@ -8,7 +8,11 @@ const extractEmailContent = (filePath) => {
       if (err) {
         return reject(err);
       }
-      resolve(parsed.text); 
+
+      const emailText = parsed.text || "";
+      const fromEmail = parsed.from?.value?.[0]?.address || "Unknown";
+
+      resolve({ emailText, fromEmail });
     });
   });
 };
@@ -18,7 +22,7 @@ const sendToPythonBackend = async (emailContent) => {
     const response = await axios.post("http://localhost:6000/predict", {
       text: emailContent,
     });
-    return response.data; 
+    return response.data;
   } catch (error) {
     console.error("Error sending data to Python backend:", error);
     throw error;
@@ -33,12 +37,13 @@ const uploadEmail = async (req, res) => {
   const filePath = req.file.path;
 
   try {
-    const emailContent = await extractEmailContent(filePath);
+    const { emailText, fromEmail } = await extractEmailContent(filePath);
 
-    const result = await sendToPythonBackend(emailContent);
+    const result = await sendToPythonBackend(emailText);
+
     fs.unlinkSync(filePath);
 
-    return res.json(result);
+    return res.json({ ...result, from: fromEmail });
   } catch (error) {
     console.error("Error processing email:", error);
     return res.status(500).json({ error: "Error processing the email file" });
