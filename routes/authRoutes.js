@@ -17,6 +17,7 @@ router.get(
   googleCallback
 );
 
+
 router.get("/logout", logout);
 
 module.exports = router;

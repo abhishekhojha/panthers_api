@@ -1,4 +1,4 @@
-const History = require("../models/history");
+const History = require("../models/History");
 
 const predictUrl = async (req, res) => {
   const { url } = req.body;
