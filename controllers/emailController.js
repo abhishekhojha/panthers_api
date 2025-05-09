@@ -1,7 +1,9 @@
 const fs = require("fs");
 const axios = require("axios");
 const { simpleParser } = require("mailparser");
-
+const path = require("path");
+const dns = require("dns");
+const validator = require("validator");
 // Helper: Resolve MX records for domain
 function resolveMxAsync(domain) {
   return new Promise((resolve, reject) => {
@@ -73,6 +75,14 @@ const uploadEmail = async (req, res) => {
 
   try {
     const { emailText, fromEmail } = await extractEmailContent(filePath);
+    const emailCheck = await isValidEmail(fromEmail);
+
+    if (!emailCheck.valid) {
+      fs.unlinkSync(filePath);
+      return res
+        .status(400)
+        .json({ error: `Invalid sender email: ${emailCheck.reason}` });
+    }
 
     const result = await sendToPythonBackend(emailText);
 
