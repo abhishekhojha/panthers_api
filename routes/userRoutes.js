@@ -6,5 +6,5 @@ const router = express.Router();
 
 router.get("/me", verifyToken, getMe);
 router.get("/history", verifyToken, getHistory);
-router.get("/", verifyToken, getStats);
+router.get("/stats", verifyToken, getStats);
 module.exports = router;
