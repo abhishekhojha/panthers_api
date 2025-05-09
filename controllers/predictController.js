@@ -17,7 +17,7 @@ const predictUrl = async (req, res) => {
     // Encrypt the URL before saving
     const encryptedUrl = new History().encryptUrl(url);
     console.log(response.data);
-    
+    const { prediction, confidence } = response.data;
     // Save history with encrypted URL
     const data = await History.create({
       userId: req.user.id,
