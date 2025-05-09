@@ -9,7 +9,7 @@ const predictUrl = async (req, res) => {
 
   try {
     // Make the request to Python service
-    const response = await axios.post("http://localhost:6000/predict", { url });
+    const response = await axios.post("http://localhost:5000/predict", { url });
 
     // Encrypt the URL before saving
     const encryptedUrl = new History().encryptUrl(url);
