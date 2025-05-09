@@ -23,7 +23,7 @@ const predictUrl = async (req, res) => {
       userId: req.user.id,
       type: "url",
       encryptedUrl: encryptedUrl, // Save only encrypted URL
-      isPhishing: prediction === "phishing",
+      isPhishing: prediction == "phishing",
     });
 
     // Return prediction response
