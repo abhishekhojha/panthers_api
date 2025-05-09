@@ -19,15 +19,15 @@ const predictUrl = async (req, res) => {
     console.log(response.data);
     
     // Save history with encrypted URL
-    await History.create({
+    const data = await History.create({
       userId: req.user.id,
       type: "url",
       encryptedUrl: encryptedUrl, // Save only encrypted URL
-      isPhishing: response.data.isPhishing,
+      isPhishing: prediction === "phishing",
     });
 
     // Return prediction response
-    res.json(response.data);
+    res.json(data);
   } catch (error) {
     console.error("Prediction API Error:", error.message);
     res.status(500).json({ error: "Prediction service unavailable" });
