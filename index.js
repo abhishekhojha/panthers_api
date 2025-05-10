@@ -7,6 +7,7 @@ const dotenv = require("dotenv");
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 const communityReport = require("./routes/communityReport");
+const statsRoutes = require("./routes/statsRoutes");
 const cookieParser = require("cookie-parser");
 
 const predictRoutes = require("./routes/predictRoutes");
@@ -64,6 +65,7 @@ app.use("/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/predict", predictRoutes);
 app.use("/api/community", communityReport);
+app.use("/api/stats", statsRoutes);
 app.get("/", (req, res) => {
   res.send("Welcome to the Home Page!");
 });
