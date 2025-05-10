@@ -11,7 +11,7 @@ const predictUrl = async (req, res) => {
   try {
     // Make the request to Python service
     const response = await axios.post(
-      "https://thumbzilla-beaches-widescreen-len.trycloudflare.com/predict",
+      "https://plaintiff-settled-dh-madonna.trycloudflare.com/predict",
       { url }
     );
     // Encrypt the URL before saving
@@ -44,7 +44,7 @@ const predictUrlForExtension = async (req, res) => {
   try {
     // Send URL to Python ML API
     const response = await axios.post(
-      "https://thumbzilla-beaches-widescreen-len.trycloudflare.com/predict",
+      "https://plaintiff-settled-dh-madonna.trycloudflare.com/predict",
       { url }
     );
 

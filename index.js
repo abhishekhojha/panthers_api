@@ -9,7 +9,7 @@ const authRoutes = require("./routes/authRoutes");
 const communityReport = require("./routes/communityReport");
 const cookieParser = require("cookie-parser");
 
-const predictRoutes = require('./routes/predictRoutes'); 
+const predictRoutes = require("./routes/predictRoutes");
 dotenv.config();
 // MongoDB Connection
 connectDB();
@@ -32,17 +32,28 @@ app.use(
 require("./config/passport");
 // Middleware
 app.use(express.json());
-const allowedOrigins = ["http://localhost:5500", "http://localhost:5173",`chrome-extension://${process.env.CHROME_EXTENSION_ID}`];
+const allowedOrigins = [
+  "http://localhost:5500",
+  "http://localhost:5173",
+  `chrome-extension://${process.env.CHROME_EXTENSION_ID}`,
+  "*",
+];
+// app.use(
+//   cors({
+//     origin: function (origin, callback) {
+//       if (!origin) return callback(null, true);
+//       if (allowedOrigins.includes(origin)) {
+//         return callback(null, true);
+//       } else {
+//         return callback(new Error("Not allowed by CORS"));
+//       }
+//     },
+//     credentials: true,
+//   })
+// );
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      } else {
-        return callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: true,
     credentials: true,
   })
 );
@@ -53,8 +64,8 @@ app.use("/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/predict", predictRoutes);
 app.use("/api/community", communityReport);
-app.get('/', (req, res) => {
-  res.send('Welcome to the Home Page!');
+app.get("/", (req, res) => {
+  res.send("Welcome to the Home Page!");
 });
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
