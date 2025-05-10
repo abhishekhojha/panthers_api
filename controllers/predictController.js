@@ -137,7 +137,10 @@ const predictUrlForExtension = async (req, res) => {
         encryptedUrl: encryptedUrl, // Save only encrypted URL
         isPhishing: false, // Mark as safe
       });
-      return res.json(data);
+      return res.json({
+        message: "Prediction saved",
+        data,
+      });
     }
 
     const googleCheckResult = await checkUrlWithGoogleSafeBrowsing(url);
@@ -150,7 +153,10 @@ const predictUrlForExtension = async (req, res) => {
         encryptedUrl,
         isPhishing: true,
       });
-      return res.json(data);
+      return res.json({
+        message: "Prediction saved",
+        data,
+      });
     }
 
     // Helper function to make prediction request
@@ -195,7 +201,6 @@ const predictUrlForExtension = async (req, res) => {
       encryptedUrl,
       isPhishing: finalPrediction == "phishing",
     });
-    console.log("Data saved:", data);
 
     return res.json({
       message: "Prediction saved",
