@@ -2,8 +2,6 @@ const History = require("../models/History");
 const CommunityReport = require("../models/CommunityReport");
 exports.getStats = async (req, res) => {
   try {
-    const userId = req.user.id;
-
     const totalScanned = await History.countDocuments();
     const threatsDetected = await History.countDocuments({
       isPhishing: true,
