@@ -4,16 +4,24 @@ const CommunityReport = require("../models/CommunityReport");
 
 exports.getStats = async (req, res) => {
   try {
-    const totalScanned = await History.countDocuments();
-    const threatsDetected = await History.countDocuments({ isPhishing: true });
-    const safeUrls = await History.countDocuments({ isPhishing: false });
-    const communityReports = await CommunityReport.countDocuments();
+    const userId = req.user.id;
+
+    const totalScanned = await History.countDocuments({ userId });
+    const threatsDetected = await History.countDocuments({
+      userId,
+      isPhishing: true,
+    });
+    const safeUrls = await History.countDocuments({
+      userId,
+      isPhishing: false,
+    });
+    const communityReports = await CommunityReport.countDocuments({ userId });
 
     res.json({
       scannedUrls: totalScanned,
       threatsDetected,
       safeUrls,
-      communityReports
+      communityReports,
     });
   } catch (error) {
     console.error("Stats fetch error:", error);
