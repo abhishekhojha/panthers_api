@@ -9,6 +9,7 @@ const communityReportSchema = new mongoose.Schema(
     },
     url: { type: String, required: true },
     reason: { type: String }, // Optional field for user to mention why
+    isPhishing: { type: Boolean, required: true },
     status: {
       type: String,
       enum: ["pending", "reviewed", "flagged"],

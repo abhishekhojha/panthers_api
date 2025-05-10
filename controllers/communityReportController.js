@@ -1,7 +1,7 @@
 const CommunityReport = require("../models/CommunityReport");
 
 exports.reportPhishingUrl = async (req, res) => {
-  const { url, reason } = req.body;
+  const { url, reason, isPhishing } = req.body;
 
   if (!url) return res.status(400).json({ error: "URL is required" });
 
@@ -10,6 +10,7 @@ exports.reportPhishingUrl = async (req, res) => {
       userId: req.user.id,
       url,
       reason,
+      isPhishing
     });
 
     await report.save();
