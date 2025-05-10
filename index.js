@@ -32,7 +32,7 @@ app.use(
 require("./config/passport");
 // Middleware
 app.use(express.json());
-const allowedOrigins = ["http://localhost:5500", "http://localhost:5173"];
+const allowedOrigins = ["http://localhost:5500", "http://localhost:5173",`chrome-extension://${process.env.CHROME_EXTENSION_ID}`];
 app.use(
   cors({
     origin: function (origin, callback) {
