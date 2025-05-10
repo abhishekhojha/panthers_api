@@ -15,13 +15,20 @@ const predictUrl = async (req, res) => {
 
   try {
     const getDomain = (url) => {
-      const domain = new URL(url).hostname.replace(/^www\./, ""); // Normalize to remove 'www'
-      return domain;
+      // const domain = new URL(url).hostname.replace(/^www\./, ""); // Normalize to remove 'www'
+      // return domain;
+      const hostname = new URL(url).hostname;
+      const parts = hostname.split(".");
+
+      if (parts.length > 2) {
+        return parts.slice(-2).join(".");
+      }
+      return hostname;
     };
 
     // Check if the domain is in the safe list
     const domain = getDomain(url);
-    
+
     if (safeDomains.includes(domain)) {
       // If domain is safe, skip model prediction and return safe
       const encryptedUrl = new History().encryptUrl(url);
@@ -35,7 +42,7 @@ const predictUrl = async (req, res) => {
     }
 
     const googleCheckResult = await checkUrlWithGoogleSafeBrowsing(url);
-    
+
     if (googleCheckResult == "phishing") {
       const encryptedUrl = new History().encryptUrl(url);
       const data = await History.create({
@@ -45,7 +52,6 @@ const predictUrl = async (req, res) => {
         isPhishing: true,
       });
       return res.json(data);
-      
     }
 
     // Helper function to make prediction request
@@ -108,37 +114,49 @@ const predictUrlForExtension = async (req, res) => {
 
   try {
     const getDomain = (url) => {
-      const domain = new URL(url).hostname.replace(/^www\./, ""); // Normalize to remove 'www'
-      return domain;
+      // const domain = new URL(url).hostname.replace(/^www\./, ""); // Normalize to remove 'www'
+      // return domain;
+      const hostname = new URL(url).hostname;
+      const parts = hostname.split(".");
+
+      if (parts.length > 2) {
+        return parts.slice(-2).join(".");
+      }
+      return hostname;
     };
 
     // Check if the domain is in the safe list
     const domain = getDomain(url);
-    
+
     if (safeDomains.includes(domain)) {
       // If domain is safe, skip model prediction and return safe
       const encryptedUrl = new History().encryptUrl(url);
       const data = await History.create({
-        userId: req.user.id,
+        deviceID,
         type: "url",
         encryptedUrl: encryptedUrl, // Save only encrypted URL
         isPhishing: false, // Mark as safe
       });
-      return res.json(data);
+      return res.json({
+        message: "Prediction saved",
+        data,
+      });
     }
 
     const googleCheckResult = await checkUrlWithGoogleSafeBrowsing(url);
-    
+
     if (googleCheckResult == "phishing") {
       const encryptedUrl = new History().encryptUrl(url);
       const data = await History.create({
-        userId: req.user.id,
+        deviceID,
         type: "url",
         encryptedUrl,
         isPhishing: true,
       });
-      return res.json(data);
-      
+      return res.json({
+        message: "Prediction saved",
+        data,
+      });
     }
 
     // Helper function to make prediction request
@@ -183,7 +201,6 @@ const predictUrlForExtension = async (req, res) => {
       encryptedUrl,
       isPhishing: finalPrediction == "phishing",
     });
-    console.log("Data saved:", data);
 
     return res.json({
       message: "Prediction saved",
