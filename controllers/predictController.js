@@ -50,12 +50,9 @@ const predictUrlForExtension = async (req, res) => {
 
     const { prediction, confidence } = response.data;
     console.log("Prediction:", prediction);
-    
+
     // Encrypt the URL before saving
     const encryptedUrl = new History().encryptUrl(url);
-    console.log("Encrypted URL:", encryptedUrl);
-    return
-    
 
     // Save history with deviceID instead of userId
     const data = await History.create({
@@ -64,11 +61,10 @@ const predictUrlForExtension = async (req, res) => {
       encryptedUrl,
       isPhishing: prediction == "phishing",
     });
+    console.log("Data saved:", data);
 
-    res.json({
+    return res.json({
       message: "Prediction saved",
-      prediction,
-      confidence,
       data,
     });
   } catch (error) {
