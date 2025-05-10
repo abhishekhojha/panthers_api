@@ -36,9 +36,6 @@ const predictUrl = async (req, res) => {
 
     const googleCheckResult = await checkUrlWithGoogleSafeBrowsing(url);
     
-    // If Google says phishing, trust it
-    console.log("Google Safe Browsing result:", googleCheckResult);
-    
     if (googleCheckResult == "phishing") {
       const encryptedUrl = new History().encryptUrl(url);
       const data = await History.create({
@@ -47,7 +44,6 @@ const predictUrl = async (req, res) => {
         encryptedUrl,
         isPhishing: true,
       });
-      console.log("Google Safe Browsing detected phishing");
       return res.json(data);
       
     }
@@ -111,14 +107,71 @@ const predictUrlForExtension = async (req, res) => {
   }
 
   try {
-    // Send URL to Python ML API
-    const response = await axios.post(
-      "https://plaintiff-settled-dh-madonna.trycloudflare.com/predict",
-      { url }
-    );
+    const getDomain = (url) => {
+      const domain = new URL(url).hostname.replace(/^www\./, ""); // Normalize to remove 'www'
+      return domain;
+    };
 
-    const { prediction, confidence } = response.data;
-    console.log("Prediction:", prediction);
+    // Check if the domain is in the safe list
+    const domain = getDomain(url);
+    
+    if (safeDomains.includes(domain)) {
+      // If domain is safe, skip model prediction and return safe
+      const encryptedUrl = new History().encryptUrl(url);
+      const data = await History.create({
+        userId: req.user.id,
+        type: "url",
+        encryptedUrl: encryptedUrl, // Save only encrypted URL
+        isPhishing: false, // Mark as safe
+      });
+      return res.json(data);
+    }
+
+    const googleCheckResult = await checkUrlWithGoogleSafeBrowsing(url);
+    
+    if (googleCheckResult == "phishing") {
+      const encryptedUrl = new History().encryptUrl(url);
+      const data = await History.create({
+        userId: req.user.id,
+        type: "url",
+        encryptedUrl,
+        isPhishing: true,
+      });
+      return res.json(data);
+      
+    }
+
+    // Helper function to make prediction request
+    const checkWithModel = async (urlToCheck) => {
+      try {
+        const response = await axios.post(
+          "https://plaintiff-settled-dh-madonna.trycloudflare.com/predict",
+          { url: urlToCheck }
+        );
+        return response.data.prediction; // Assuming prediction is in `prediction` field
+      } catch (error) {
+        console.error("Error checking URL:", error.message);
+        return "error"; // In case of network or API failure
+      }
+    };
+
+    let withoutWWW = url.replace(/^www\./, "");
+    if (!withoutWWW.match(/^https?:\/\//)) {
+      withoutWWW = "https://" + withoutWWW;
+    }
+
+    let withWWW = withoutWWW.replace(/^https?:\/\//, ""); // Remove protocol
+    withWWW = "https://www." + withWWW; // Add 'www.' prefix
+
+    // Check both versions of the URL
+    const resultWithoutWWW = await checkWithModel(withoutWWW);
+    const resultWithWWW = await checkWithModel(withWWW);
+
+    // If both are phishing, mark as phishing
+    const finalPrediction =
+      resultWithoutWWW == "phishing" && resultWithWWW == "phishing"
+        ? "phishing"
+        : "safe";
 
     // Encrypt the URL before saving
     const encryptedUrl = new History().encryptUrl(url);
@@ -128,7 +181,7 @@ const predictUrlForExtension = async (req, res) => {
       deviceID,
       type: "url",
       encryptedUrl,
-      isPhishing: prediction == "phishing",
+      isPhishing: finalPrediction == "phishing",
     });
     console.log("Data saved:", data);
 
