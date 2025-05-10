@@ -9,21 +9,44 @@ const predictUrl = async (req, res) => {
   }
 
   try {
-    // Make the request to Python service
-    const response = await axios.post(
-      "https://plaintiff-settled-dh-madonna.trycloudflare.com/predict",
-      { url }
-    );
+    // Helper function to make prediction request
+    const checkWithModel = async (urlToCheck) => {
+      try {
+        const response = await axios.post(
+          "https://plaintiff-settled-dh-madonna.trycloudflare.com/predict",
+          { url: urlToCheck }
+        );
+        return response.data.prediction;  // Assuming prediction is in `prediction` field
+      } catch (error) {
+        console.error('Error checking URL:', error.message);
+        return "error";  // In case of network or API failure
+      }
+    };
+
+    let withoutWWW = url.replace(/^www\./, ''); 
+    if (!withoutWWW.match(/^https?:\/\//)) {
+      withoutWWW = 'https://' + withoutWWW; 
+    }
+
+    let withWWW = withoutWWW.replace(/^https?:\/\//, '');  // Remove protocol
+    withWWW = 'https://www.' + withWWW;  // Add 'www.' prefix
+
+    // Check both versions of the URL
+    const resultWithoutWWW = await checkWithModel(withoutWWW);
+    const resultWithWWW = await checkWithModel(withWWW);
+
+    // If both are phishing, mark as phishing
+    const finalPrediction = (resultWithoutWWW == "phishing" && resultWithWWW == "phishing") ? "phishing" : "safe";
+
     // Encrypt the URL before saving
     const encryptedUrl = new History().encryptUrl(url);
-    console.log(response.data);
-    const { prediction, confidence } = response.data;
+
     // Save history with encrypted URL
     const data = await History.create({
       userId: req.user.id,
       type: "url",
-      encryptedUrl: encryptedUrl, // Save only encrypted URL
-      isPhishing: prediction == "phishing",
+      encryptedUrl: encryptedUrl,  // Save only encrypted URL
+      isPhishing: finalPrediction == "phishing",
     });
 
     // Return prediction response
