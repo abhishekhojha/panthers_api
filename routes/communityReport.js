@@ -5,10 +5,10 @@ const {
   getReports,
   updateReportStatus,
 } = require("../controllers/communityReportController");
-const { verifyToken } = require("../middlewares/auth");
+const { verifyToken, isAdmin } = require("../middlewares/auth");
 
 router.post("/report", verifyToken, reportPhishingUrl);
-router.get("/", verifyToken, getReports); 
-// router.patch("/:id", verifyToken, updateReportStatus); 
+router.get("/", verifyToken, getReports);
+router.patch("/:id", verifyToken, isAdmin, updateReportStatus);
 
 module.exports = router;

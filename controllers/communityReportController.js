@@ -22,7 +22,7 @@ exports.reportPhishingUrl = async (req, res) => {
 
 exports.getReports = async (req, res) => {
   try {
-    const reports = await CommunityReport.find().populate("userId", "email");
+    const reports = await CommunityReport.find().sort({ createdAt: -1 }).populate("userId", "email");
     res.json(reports);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch reports" });
