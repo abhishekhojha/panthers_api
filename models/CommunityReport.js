@@ -12,7 +12,7 @@ const communityReportSchema = new mongoose.Schema(
     isPhishing: { type: Boolean, required: true },
     status: {
       type: String,
-      enum: ["pending", "reviewed", "flagged"],
+      enum: ["pending", "reviewed", "flagged", "rejected"],
       default: "pending",
     },
   },
