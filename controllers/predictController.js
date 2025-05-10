@@ -132,7 +132,7 @@ const predictUrlForExtension = async (req, res) => {
       // If domain is safe, skip model prediction and return safe
       const encryptedUrl = new History().encryptUrl(url);
       const data = await History.create({
-        userId: req.user.id,
+        deviceID,
         type: "url",
         encryptedUrl: encryptedUrl, // Save only encrypted URL
         isPhishing: false, // Mark as safe
@@ -145,7 +145,7 @@ const predictUrlForExtension = async (req, res) => {
     if (googleCheckResult == "phishing") {
       const encryptedUrl = new History().encryptUrl(url);
       const data = await History.create({
-        userId: req.user.id,
+        deviceID,
         type: "url",
         encryptedUrl,
         isPhishing: true,
