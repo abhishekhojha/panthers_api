@@ -49,7 +49,7 @@ const extractEmailContent = (filePath) => {
 
 const sendToPythonBackend = async (emailContent) => {
   try {
-    const response = await axios.post("https://flows-scuba-sender-incidents.trycloudflare.com/predict", {
+    const response = await axios.post("https://legislative-designation-prefer-hope.trycloudflare.com/predict", {
       text: emailContent,
     });
     return response.data;

@@ -58,7 +58,7 @@ const predictUrl = async (req, res) => {
     const checkWithModel = async (urlToCheck) => {
       try {
         const response = await axios.post(
-          "https://plaintiff-settled-dh-madonna.trycloudflare.com/predict",
+          "https://perl-piano-belkin-mega.trycloudflare.com/predict",
           { url: urlToCheck }
         );
         return response.data.prediction; // Assuming prediction is in `prediction` field
@@ -163,7 +163,7 @@ const predictUrlForExtension = async (req, res) => {
     const checkWithModel = async (urlToCheck) => {
       try {
         const response = await axios.post(
-          "https://plaintiff-settled-dh-madonna.trycloudflare.com/predict",
+          "https://perl-piano-belkin-mega.trycloudflare.com/predict",
           { url: urlToCheck }
         );
         return response.data.prediction; // Assuming prediction is in `prediction` field
