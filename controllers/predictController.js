@@ -169,7 +169,10 @@ const predictUrlForExtension = async (req, res) => {
         encryptedUrl,
         isPhishing: latestReport.isPhishing,
       });
-      return res.json(data);
+      return res.json({
+        message: "Prediction saved",
+        data,
+      });
     }
     const googleCheckResult = await checkUrlWithGoogleSafeBrowsing(url);
 
