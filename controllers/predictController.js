@@ -164,7 +164,7 @@ const predictUrlForExtension = async (req, res) => {
     if (latestReport && latestReport.status === "validated") {
       const encryptedUrl = new History().encryptUrl(url);
       const data = await History.create({
-        userId: req.user.id,
+        deviceID,
         type: "url",
         encryptedUrl,
         isPhishing: latestReport.isPhishing,
