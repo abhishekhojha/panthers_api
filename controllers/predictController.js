@@ -6,6 +6,8 @@ const { checkUrlWithGoogleSafeBrowsing } = require("./checkURLGoogle");
 const safeDomains = JSON.parse(
   fs.readFileSync(path.resolve(__dirname, "safe_domains.json"), "utf-8")
 ).safe_domains;
+const CommunityReport = require("../models/CommunityReport");
+
 const predictUrl = async (req, res) => {
   const { url } = req.body;
 
@@ -40,7 +42,20 @@ const predictUrl = async (req, res) => {
       });
       return res.json(data);
     }
+    const latestReport = await CommunityReport.findOne({ url })
+      .sort({ createdAt: -1 }) // get the latest entry
+      .exec();
 
+    if (latestReport && latestReport.status === "validated") {
+      const encryptedUrl = new History().encryptUrl(url);
+      const data = await History.create({
+        userId: req.user.id,
+        type: "url",
+        encryptedUrl,
+        isPhishing: latestReport.isPhishing,
+      });
+      return res.json(data);
+    }
     const googleCheckResult = await checkUrlWithGoogleSafeBrowsing(url);
 
     if (googleCheckResult == "phishing") {
@@ -142,7 +157,20 @@ const predictUrlForExtension = async (req, res) => {
         data,
       });
     }
+    const latestReport = await CommunityReport.findOne({ url })
+      .sort({ createdAt: -1 }) // get the latest entry
+      .exec();
 
+    if (latestReport && latestReport.status === "validated") {
+      const encryptedUrl = new History().encryptUrl(url);
+      const data = await History.create({
+        userId: req.user.id,
+        type: "url",
+        encryptedUrl,
+        isPhishing: latestReport.isPhishing,
+      });
+      return res.json(data);
+    }
     const googleCheckResult = await checkUrlWithGoogleSafeBrowsing(url);
 
     if (googleCheckResult == "phishing") {
